@@ -6,6 +6,6 @@ note that they will not run without a control hub hooked up to your Windows-emul
 this being said, i would love your help! check the team discord for an ongoing list of programming projects that still need completion.
 even without the control hub there's plenty of research and coding to be done!
 
-p.s. TestOP is currently the code we're using to run the robot, i'll update it at the end of every practice
+p.s. TestOP is lake's code, testing is seabass' bad things
 
 email: patience.gifford23@trinityschoolnyc.org
