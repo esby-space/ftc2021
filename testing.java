@@ -72,16 +72,15 @@ public class testing extends LinearOpMode {
             backRightMotor.setPower(backRightPower);
 
             // delivery system
-            boolean deliverySystemCCW = gamepad1.left_bumper;
-            boolean deliverSystemCW = gamepad1.right_bumper;
+            double dsOffset = 0;
 
-            if (deliverSystemCW) {
-                deliverySystem.setPosition(0.2);
-            } else if (deliverySystemCCW) {
-                deliverySystem.setPosition(-0.2);
-            } else {
-                deliverySystem.setPosition(0);
+            if (gamepad1.left_bumper) {
+                deliverySystem.setPosition(dsOffset + 0.2);
+            } else if (gamepad1.right_bumper) {
+                deliverySystem.setPosition(dsOffset - 0.2);
             }
+
+            deliverySystem.setPosition(0.5 + dsOffset);
 
             // duck wheel
             double duckWheelCCW = gamepad1.left_trigger;
@@ -89,13 +88,13 @@ public class testing extends LinearOpMode {
             double duckPower;
 
             if (duckWheelCCW > 0) {
-                duckPower = duckWheelCCW;
+                duckPower = -duckWheelCCW;
                 duckTurner.setPower(duckPower);
-            }
-
-            if (duckWheelCW > 0) {
-                duckPower = -duckWheelCW;
+            } else if (duckWheelCW > 0) {
+                duckPower = duckWheelCW;
                 duckTurner.setPower(duckPower);
+            } else {
+                duckTurner.setPower(0);
             }
 
             // linear slide
@@ -104,7 +103,7 @@ public class testing extends LinearOpMode {
             boolean a_button = gamepad1.a;
             boolean b_button = gamepad1.b;
             double seconds = 0;
-            double r = 1; // inches for 1 rotation
+            double r = 0.5; // inches for 1 rotation
 
             // determine the number of seconds from the bottom the linear slide has to run for
             if (y_button) {
