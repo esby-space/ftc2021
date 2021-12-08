@@ -7,31 +7,38 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@TeleOp(name="TestBot: TeleOP", group="TestBot")
+@TeleOp(name="Test TeleOP", group="TestBot")
 public class testing extends LinearOpMode {
-    
+
     @Override
     public void runOpMode() {
         // all of the motors and servos on the robot
-        
+
         DcMotor frontLeftMotor;
         DcMotor frontRightMotor;
         DcMotor backLeftMotor;
         DcMotor backRightMotor;
         DcMotor linearSlide;
-        // private DcMotor verticalSweeper;
         DcMotor duckTurner;
         Servo deliverySystem;
-        
+        DcMotor intakeSystem;
+        // DcMotor verticalSweeper;
+
         // map variables to the actual motors
+        // control hub:
         frontLeftMotor = hardwareMap.dcMotor.get("frontLeft");
         frontRightMotor = hardwareMap.dcMotor.get("frontRight");
         backLeftMotor = hardwareMap.dcMotor.get("backLeft");
         backRightMotor = hardwareMap.dcMotor.get("backRight");
-        deliverySystem = hardwareMap.servo.get("deliverySystem");
+
+        // expansion hub motors
         linearSlide = hardwareMap.dcMotor.get("linearSlide");
-        duckTurner = hardwareMap.dcMotor.get("duckTurner");
-        
+        intakeSystem = hardwareMap.dcMotor.get("intakeSystem");
+        duckTurner = hardwareMap.dcMotor.get("duckSystem");
+
+        // expansion hub servos
+        deliverySystem = hardwareMap.servo.get("deliverySystem");
+
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -43,6 +50,7 @@ public class testing extends LinearOpMode {
 
         // initialize the timer
         ElapsedTime motorTimer = new ElapsedTime();
+        double startTimer = 0;
 
         // when the start button is pushed, repeat this until end
         while (opModeIsActive()) {
@@ -63,23 +71,16 @@ public class testing extends LinearOpMode {
             frontRightMotor.setPower(frontRightPower);
             backRightMotor.setPower(backRightPower);
 
-            telemetry.addData("Say", gamepad1.dpad_down);
-            telemetry.update();
-
             // delivery system
             boolean deliverySystemCCW = gamepad1.left_bumper;
             boolean deliverSystemCW = gamepad1.right_bumper;
 
             if (deliverSystemCW) {
                 deliverySystem.setPosition(0.2);
-                telemetry.addData("delivery", "clock wise");
-                telemetry.update();
-            }
-
-            if (deliverySystemCCW) {
+            } else if (deliverySystemCCW) {
                 deliverySystem.setPosition(-0.2);
-                telemetry.addData("delivery", "counter clock wise");
-                telemetry.update();
+            } else {
+                deliverySystem.setPosition(0);
             }
 
             // duck wheel
@@ -108,16 +109,17 @@ public class testing extends LinearOpMode {
             // determine the number of seconds from the bottom the linear slide has to run for
             if (y_button) {
                 seconds = 0.431 / r;
+                startTimer = motorTimer.time();
             } else if (x_button) {
                 seconds = 1.207 / r;
+                startTimer = motorTimer.time();
             } else if (a_button) {
                 seconds = 2.069 / r;
+                startTimer = motorTimer.time();
             } else if (b_button) {
                 linearSlide.setPower(-1);
-                seconds = 0;
             }
 
-            double startTimer = motorTimer.time();
             while (motorTimer.time() < startTimer + seconds) {
                 linearSlide.setPower(1);
             }
