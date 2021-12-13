@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "Testing TeleOP", group = "Test Bot")
+@TeleOp(name = "TeleOP", group = "Disco Bot")
 public class TeleOP extends LinearOpMode {
 
     @Override
@@ -29,6 +29,10 @@ public class TeleOP extends LinearOpMode {
 
         // expansion hub servos
         Servo deliverySystem = hardwareMap.servo.get("deliverySystem");
+        double deliverySystemPosition = 0.2; // initial position
+        double rotationAmount = 0.5;
+
+        deliverySystem.setPosition(deliverySystemPosition); // need testing
 
         // wait for start signal to be given
         waitForStart();
@@ -60,13 +64,22 @@ public class TeleOP extends LinearOpMode {
 
             // delivery system
             if (gamepad1.left_bumper) {
-                deliverySystem.setPosition(0.5 + 0.2);
+                deliverySystem.setPosition(deliverySystemPosition + rotationAmount);
                 telemetry.addData("Delivery System", "Counter-clockwise");
                 telemetry.update();
             } else if (gamepad1.right_bumper) {
-                deliverySystem.setPosition(0.5 - 0.2);
+                deliverySystem.setPosition(deliverySystemPosition - rotationAmount);
                 telemetry.addData("Delivery System", "Clockwise");
                 telemetry.update();
+            }
+
+            // intake system
+            if (gamepad1.dpad_up) {
+                intakeSystem.setPower(-1);
+            } else if (gamepad1.dpad_down) {
+                intakeSystem.setPower(1);
+            } else {
+                intakeSystem.setPower(0);
             }
 
             // duck wheel
