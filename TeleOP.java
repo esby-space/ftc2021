@@ -12,8 +12,9 @@ public class TeleOP extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        // map the motors to the robot
-        // control hub:
+        // MOTORS AND SERVOS //
+
+        // control hub
         DcMotor frontLeft = hardwareMap.dcMotor.get("frontLeft");
         DcMotor frontRight = hardwareMap.dcMotor.get("frontRight");
         DcMotor backLeft = hardwareMap.dcMotor.get("backLeft");
@@ -22,31 +23,41 @@ public class TeleOP extends LinearOpMode {
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        // expansion hub motors
+        // expansion hub
         DcMotor linearSlide = hardwareMap.dcMotor.get("linearSlide");
         DcMotor intakeSystem = hardwareMap.dcMotor.get("intakeSystem");
         DcMotor duckWheel = hardwareMap.dcMotor.get("duckSystem");
 
-        // expansion hub servos
+        // servo
         Servo deliverySystem = hardwareMap.servo.get("deliverySystem");
-        double deliverySystemPosition = 0.2; // initial position
-        double rotationAmount = 0.5;
+        double initialPosition = 0.2;
+        double movingPosition = 0.5;
+        double droppingPosition = 1.0;
 
-        deliverySystem.setPosition(deliverySystemPosition); // need testing
+        int positionState = 0; // set servo position to initial position
+        deliverySystem.setPosition(initialPosition);
 
-        // wait for start signal to be given
+        // RISING EDGE BUTTON DETECTOR SETUP //
+        boolean risingA = false;
+        boolean risingX = false;
+        boolean risingY = false;
+        boolean risingLeftBumper = false;
+        boolean risingRightBumper = false;
+
+        // START //
         waitForStart();
         telemetry.addData("Start", "Hello, World!");
         telemetry.update();
 
-        // initialize the timer
+        // timer
         ElapsedTime motorTimer = new ElapsedTime();
-        double startTimer = 0;
+        double startTime = 0;
 
-        // when the start button is pushed, repeat this until end
+        // MAIN LOOP //
         while (opModeIsActive()) {
 
-            // Movement and rotation of the robot with mecanum wheels
+            // MOVEMENT OF MECANUM WHEELS //
+            // credit to game manual 0
             double move_y = -gamepad1.left_stick_y; // Remember, this is reversed!
             double move_x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
             double move_rotate = -gamepad1.right_stick_x;
@@ -62,18 +73,31 @@ public class TeleOP extends LinearOpMode {
             frontRight.setPower(frontRightPower);
             backRight.setPower(backRightPower);
 
-            // delivery system
-            if (gamepad1.left_bumper) {
-                deliverySystem.setPosition(deliverySystemPosition + rotationAmount);
-                telemetry.addData("Delivery System", "Counter-clockwise");
-                telemetry.update();
-            } else if (gamepad1.right_bumper) {
-                deliverySystem.setPosition(deliverySystemPosition - rotationAmount);
-                telemetry.addData("Delivery System", "Clockwise");
-                telemetry.update();
+            // DELIVERY SYSTEM //
+            if (!risingLeftBumper && gamepad1.left_bumper) {
+                if (positionState != 0) positionState--;
+            } else if (!risingRightBumper && gamepad1.right_bumper) {
+                if (positionState != 2) positionState++;
             }
 
-            // intake system
+            switch (positionState) {
+                case 0:
+                    deliverySystem.setPosition(initialPosition);
+                    break;
+                case 1:
+                    deliverySystem.setPosition(movingPosition);
+                    break;
+                case 2:
+                    deliverySystem.setPosition(droppingPosition);
+                default:
+                    deliverySystem.setPosition(initialPosition);
+            }
+            // this is so ugly °~°
+
+            risingLeftBumper = gamepad1.left_bumper;
+            risingRightBumper = gamepad1.right_bumper;
+
+            // INTAKE SYSTEM //
             if (gamepad1.dpad_up) {
                 intakeSystem.setPower(-1);
             } else if (gamepad1.dpad_down) {
@@ -82,7 +106,7 @@ public class TeleOP extends LinearOpMode {
                 intakeSystem.setPower(0);
             }
 
-            // duck wheel
+            // DUCK WHEEL //
             double duckWheelCCW = gamepad1.left_trigger;
             double duckWheelCW = gamepad1.right_trigger;
 
@@ -98,38 +122,40 @@ public class TeleOP extends LinearOpMode {
                 duckWheel.setPower(0);
             }
 
-            // linear slide
-            boolean y_button = gamepad1.y;
-            boolean x_button = gamepad1.x;
-            boolean a_button = gamepad1.a;
-            boolean b_button = gamepad1.b;
+            // LINEAR SLIDE
             double seconds = 0;
-            double rate = 2; // inches for 1 rotation
+            double rate = 1; // trial and error to find right value
 
             // determine the number of seconds from the bottom the linear slide has to run for
-            // decimal-ly numbers based on heights of the wedding cake thingy
-            if (y_button) {
+            if (!risingY && gamepad1.y) {
                 seconds = 0.4 / rate;
-                startTimer = motorTimer.time();
+                startTime = motorTimer.time();
                 telemetry.addData("Linear Slide", "Going to level 1");
-            } else if (x_button) {
+            } else if (!risingX && gamepad1.x) {
                 seconds = 1.2 / rate;
-                startTimer = motorTimer.time();
+                startTime = motorTimer.time();
                 telemetry.addData("Linear Slide", "Going to level 2");
-            } else if (a_button) {
+            } else if (!risingA && gamepad1.a) {
                 seconds = 2.0 / rate;
-                startTimer = motorTimer.time();
+                startTime = motorTimer.time();
                 telemetry.addData("Linear Slide", "Going to level 3");
-            } else if (b_button) {
+            } else if (gamepad1.b) {
                 linearSlide.setPower(-1);
                 telemetry.addData("Linear Slide", "Going down");
+            } else if (gamepad1.dpad_left) { // secret debug in case things go wrong
+                linearSlide.setPower(1);
+                telemetry.addData("Linear Slide", "Going up");
             }
             telemetry.update();
 
-            while (motorTimer.time() < startTimer + seconds) {
+            while (motorTimer.time() < startTime + seconds) {
                 linearSlide.setPower(1);
             }
             linearSlide.setPower(0);
+
+            risingA = gamepad1.a;
+            risingX = gamepad1.x;
+            risingY = gamepad1.y;
 
             idle();
         }

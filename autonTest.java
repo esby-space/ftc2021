@@ -66,9 +66,9 @@ import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Pushbot: Auto Drive By Encoder", group="Disco Bot")
+@Autonomous(name="AutonOP", group="Disco Bot")
 @Disabled
-public class PushbotAutoDriveByEncoder_Linear extends LinearOpMode {
+public class autonTest extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor frontLeftMotor = null;

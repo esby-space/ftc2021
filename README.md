@@ -38,7 +38,6 @@
 | left trigger         | duck wheel ccw       |
 | right trigger        | duck wheel cw        |
 
--   \*currently not implemented
 -   cw - clockwise
 -   ccw - counterclockwise
 -   let us know of any suggestions to make this better!
