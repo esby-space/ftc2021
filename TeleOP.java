@@ -118,8 +118,8 @@ public class TeleOP extends LinearOpMode {
 
             // DUCK WHEEL //
             // limit the speed of the duck wheel if necessary
-            double duckWheelCCW = gamepad1.left_trigger < duckWheelRate ? gamepad1.left_trigger : duckWheelRate;
-            double duckWheelCW = gamepad1.right_trigger < duckWheelRate ? gamepad1.right_trigger : duckWheelRate;
+            double duckWheelCCW = Math.min(gamepad1.left_trigger, duckWheelRate);
+            double duckWheelCW = Math.min(gamepad1.right_trigger, duckWheelRate);;
 
             if (duckWheelCCW > 0) {
                 duckWheel.setPower(-duckWheelCCW);
@@ -157,6 +157,7 @@ public class TeleOP extends LinearOpMode {
                 telemetry.addData("Linear Slide", "Going up");
             }
             telemetry.update();
+            // this is also quite ugly °-°
 
             // run linear slide motor while current time < target time
             while (motorTimer.time() < startTime + seconds) {
@@ -172,3 +173,10 @@ public class TeleOP extends LinearOpMode {
         }
     }
 }
+
+// 14413!
+
+// /\__/\
+// (=o.o=)
+// |/--\|
+// (")-(")
