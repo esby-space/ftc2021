@@ -13,15 +13,11 @@ public class TeleOP extends LinearOpMode {
     @Override
     public void runOpMode() {
         // MOTORS AND SERVOS //
-
         // control hub
         DcMotor frontLeft = hardwareMap.dcMotor.get("frontLeft");
         DcMotor frontRight = hardwareMap.dcMotor.get("frontRight");
         DcMotor backLeft = hardwareMap.dcMotor.get("backLeft");
         DcMotor backRight = hardwareMap.dcMotor.get("backRight");
-
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // expansion hub
         DcMotor linearSlide = hardwareMap.dcMotor.get("linearSlide");
@@ -30,14 +26,28 @@ public class TeleOP extends LinearOpMode {
 
         // servo
         Servo deliverySystem = hardwareMap.servo.get("deliverySystem");
-        double initialPosition = 0.2;
-        double movingPosition = 0.5;
-        double droppingPosition = 1.0;
 
-        int positionState = 0; // set servo position to initial position
+        // CONFIGURATION //
+        // motor power config
+        double intakeSystemRate = 1; // how fast the intake system should run
+        double duckWheelRate = 1; //how fast the duck wheel could spin
+        double linearSlideLevelRate = 1; // calibrate to reach level 1, 2, 3
+        double linearSlideBaseRate = 1; // how fast the linear slide goes up when holding down button
+
+        // delivery system servo config
+        double initialPosition = 0.2; // position when intake system running
+        double movingPosition = 0.5; // position when holding piece and going up
+        double droppingPosition = 1.0; // position when dropping piece
+
+        // SETUP //
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        // set servo position to initial position
+        int positionState = 0;
         deliverySystem.setPosition(initialPosition);
 
-        // RISING EDGE BUTTON DETECTOR SETUP //
+        // rising edge button detector setup
         boolean risingA = false;
         boolean risingX = false;
         boolean risingY = false;
@@ -49,7 +59,7 @@ public class TeleOP extends LinearOpMode {
         telemetry.addData("Start", "Hello, World!");
         telemetry.update();
 
-        // timer
+        // timer for linear slide
         ElapsedTime motorTimer = new ElapsedTime();
         double startTime = 0;
 
@@ -99,16 +109,17 @@ public class TeleOP extends LinearOpMode {
 
             // INTAKE SYSTEM //
             if (gamepad1.dpad_up) {
-                intakeSystem.setPower(-1);
+                intakeSystem.setPower(-intakeSystemRate);
             } else if (gamepad1.dpad_down) {
-                intakeSystem.setPower(1);
+                intakeSystem.setPower(intakeSystemRate);
             } else {
                 intakeSystem.setPower(0);
             }
 
             // DUCK WHEEL //
-            double duckWheelCCW = gamepad1.left_trigger;
-            double duckWheelCW = gamepad1.right_trigger;
+            // limit the speed of the duck wheel if necessary
+            double duckWheelCCW = gamepad1.left_trigger < duckWheelRate ? gamepad1.left_trigger : duckWheelRate;
+            double duckWheelCW = gamepad1.right_trigger < duckWheelRate ? gamepad1.right_trigger : duckWheelRate;
 
             if (duckWheelCCW > 0) {
                 duckWheel.setPower(-duckWheelCCW);
@@ -124,30 +135,30 @@ public class TeleOP extends LinearOpMode {
 
             // LINEAR SLIDE
             double seconds = 0;
-            double rate = 1; // trial and error to find right value
 
             // determine the number of seconds from the bottom the linear slide has to run for
             if (!risingY && gamepad1.y) {
-                seconds = 0.4 / rate;
+                seconds = 0.4 / linearSlideLevelRate;
                 startTime = motorTimer.time();
                 telemetry.addData("Linear Slide", "Going to level 1");
             } else if (!risingX && gamepad1.x) {
-                seconds = 1.2 / rate;
+                seconds = 1.2 / linearSlideLevelRate;
                 startTime = motorTimer.time();
                 telemetry.addData("Linear Slide", "Going to level 2");
             } else if (!risingA && gamepad1.a) {
-                seconds = 2.0 / rate;
+                seconds = 2.0 / linearSlideLevelRate;
                 startTime = motorTimer.time();
                 telemetry.addData("Linear Slide", "Going to level 3");
             } else if (gamepad1.b) {
-                linearSlide.setPower(-1);
+                linearSlide.setPower(-linearSlideBaseRate);
                 telemetry.addData("Linear Slide", "Going down");
             } else if (gamepad1.dpad_left) { // secret debug in case things go wrong
-                linearSlide.setPower(1);
+                linearSlide.setPower(linearSlideBaseRate);
                 telemetry.addData("Linear Slide", "Going up");
             }
             telemetry.update();
 
+            // run linear slide motor while current time < target time
             while (motorTimer.time() < startTime + seconds) {
                 linearSlide.setPower(1);
             }
