@@ -30,22 +30,18 @@ public class TeleOP extends LinearOpMode {
         // CONFIGURATION //
         // motor power config
         double intakeSystemRate = 1; // how fast the intake system should run
-        double duckWheelRate = 1; //how fast the duck wheel could spin
+        double duckWheelRate = 0.5; //how fast the duck wheel could spin
         double linearSlideLevelRate = 1; // calibrate to reach level 1, 2, 3
         double linearSlideBaseRate = 1; // how fast the linear slide goes up when holding down button
 
         // delivery system servo config
-        double initialPosition = 0.2; // position when intake system running
+        double initialPosition = 0.7; // position when intake system running
         double movingPosition = 0.5; // position when holding piece and going up
-        double droppingPosition = 1.0; // position when dropping piece
+        double droppingPosition = 0.3; // position when dropping piece
 
         // SETUP //
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+//        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE); // backwards gear, much love ryman <3
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        // set servo position to initial position
-        int positionState = 0;
-        deliverySystem.setPosition(initialPosition);
 
         // rising edge button detector setup
         boolean risingA = false;
@@ -59,6 +55,10 @@ public class TeleOP extends LinearOpMode {
         telemetry.addData("Start", "Hello, World!");
         telemetry.update();
 
+        // set servo position to initial position
+        int positionState = 0;
+        deliverySystem.setPosition(initialPosition);
+
         // timer for linear slide
         ElapsedTime motorTimer = new ElapsedTime();
         double startTime = 0;
@@ -68,9 +68,9 @@ public class TeleOP extends LinearOpMode {
 
             // MOVEMENT OF MECANUM WHEELS //
             // credit to game manual 0
-            double move_y = -gamepad1.left_stick_y; // Remember, this is reversed!
-            double move_x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-            double move_rotate = -gamepad1.right_stick_x;
+            double move_x = gamepad2.left_stick_y; // Remember, this is reversed!
+            double move_y = -gamepad2.left_stick_x * 1.1; // Counteract imperfect strafing
+            double move_rotate = gamepad2.right_stick_x;
 
             double denominator = Math.max(Math.abs(move_y) + Math.abs(move_x) + Math.abs(move_rotate), 1);
             double frontLeftPower = (move_y + move_x + move_rotate) / denominator;
@@ -99,8 +99,7 @@ public class TeleOP extends LinearOpMode {
                     break;
                 case 2:
                     deliverySystem.setPosition(droppingPosition);
-                default:
-                    deliverySystem.setPosition(initialPosition);
+                    break;
             }
             // this is so ugly °~°
 
@@ -119,7 +118,7 @@ public class TeleOP extends LinearOpMode {
             // DUCK WHEEL //
             // limit the speed of the duck wheel if necessary
             double duckWheelCCW = Math.min(gamepad1.left_trigger, duckWheelRate);
-            double duckWheelCW = Math.min(gamepad1.right_trigger, duckWheelRate);;
+            double duckWheelCW = Math.min(gamepad1.right_trigger, duckWheelRate);
 
             if (duckWheelCCW > 0) {
                 duckWheel.setPower(-duckWheelCCW);
@@ -138,21 +137,30 @@ public class TeleOP extends LinearOpMode {
 
             // determine the number of seconds from the bottom the linear slide has to run for
             if (!risingY && gamepad1.y) {
+                // move to level 1
                 seconds = 0.4 / linearSlideLevelRate;
                 startTime = motorTimer.time();
                 telemetry.addData("Linear Slide", "Going to level 1");
+
             } else if (!risingX && gamepad1.x) {
+                // move to level 2
                 seconds = 1.2 / linearSlideLevelRate;
                 startTime = motorTimer.time();
                 telemetry.addData("Linear Slide", "Going to level 2");
+
             } else if (!risingA && gamepad1.a) {
+                // move to level 3
                 seconds = 2.0 / linearSlideLevelRate;
                 startTime = motorTimer.time();
                 telemetry.addData("Linear Slide", "Going to level 3");
+
             } else if (gamepad1.b) {
+                // move down when b is pressed
                 linearSlide.setPower(-linearSlideBaseRate);
                 telemetry.addData("Linear Slide", "Going down");
-            } else if (gamepad1.dpad_left) { // secret debug in case things go wrong
+
+            } else if (gamepad1.dpad_left) {
+                // secret debug in case things go wrong
                 linearSlide.setPower(linearSlideBaseRate);
                 telemetry.addData("Linear Slide", "Going up");
             }
