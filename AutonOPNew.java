@@ -143,10 +143,12 @@ public class AutonOPNew extends LinearOpMode {
         }
     }
 
-    /** Move the linear slide to a absolute specific level using encoders.
+    /**
+     * Move the linear slide to a absolute specific level using encoders.
      *
-     * @param level which level to move to
-     * @param timeOut how long to run the motor before forced to stop */
+     * @param level   which level to move to
+     * @param timeOut how long to run the motor before forced to stop
+     */
     public void encoderLinearSlide(int level, double timeOut) {
         if (opModeIsActive()) {
             int target;

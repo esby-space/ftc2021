@@ -13,10 +13,11 @@
 
 ### files
 
-1. **AutopOP.java** - robot code for 30 second autonomous period
-2. **TeleOP.java** - robot code for driver control
-3. **...New.java** - experimental file that probably doesn't work
-4. **...Old.java** - old version of file in case current one doesn't work
+1. `AutopOP.java` - robot code for 30 second autonomous period
+2. `TeleOP.java` - robot code for driver control
+3. `TensorFlowOP.java` - game object detection testing code
+4. `...New.java` - experimental file that probably doesn't work
+5. `...Old.java` - old version of file in case current one doesn't work
 
 ## TeleOP
 
@@ -44,9 +45,13 @@
 -   ccw - counterclockwise
 -   let us know of any suggestions to make this better!
 
-## Auton
+## AutonOP
 
 TBD
+
+## TensorFlowOP
+
+**Important:** see the software section of the discord server for vuforia key, it should be a long string of random looking letters and numbers. Paste that into the variable called `VUFORIA_KEY` inside the double quotes.
 
 ---
 
