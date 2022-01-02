@@ -4,9 +4,12 @@
 
 ## how to edit and run code
 
-1. download the [FTC SDK](https://github.com/FIRST-Tech-Challenge/FtcRobotController) for freight frenzy
-2. copy and paste these files in the TeamCode/src/main/java/.../teamcode folder and open the project in [Android Studio](https://developer.android.com/studio/)
-3. plug your computer into the control hub, select REV control hub from device manager, and press the play button next to it
+1. download the [FTC SDK](https://github.com/FIRST-Tech-Challenge/FtcRobotController) for freight
+   frenzy
+2. copy and paste these files in the TeamCode/src/main/java/.../teamcode folder and open the project
+   in [Android Studio](https://developer.android.com/studio/)
+3. plug your computer into the control hub, select REV control hub from device manager, and press
+   the play button next to it
 4. wait for a "launch successful" at the bottom
 5. unplug from the robot, connect the driver hub to control hub via wifi
 6. robot go beep boop, select configuration and OP mode, initialize, and press play!
@@ -41,9 +44,9 @@
 | left trigger         | duck wheel ccw       |
 | right trigger        | duck wheel cw        |
 
--   cw - clockwise
--   ccw - counterclockwise
--   let us know of any suggestions to make this better!
+- cw - clockwise
+- ccw - counterclockwise
+- let us know of any suggestions to make this better!
 
 ## AutonOP
 
@@ -51,17 +54,19 @@ TBD
 
 ## TensorFlowOP
 
-**Important:** see the software section of the discord server for vuforia key, it should be a long string of random looking letters and numbers. Paste that into the variable called `VUFORIA_KEY` inside the double quotes.
+**Important:** see the software section of the discord server for vuforia key, it should be a long
+string of random looking letters and numbers. Paste that into the variable called `VUFORIA_KEY`
+inside the double quotes.
 
 ---
 
 ## i would love your help!
 
-check the team discord for an ongoing list of programming projects that still need completion.
-even without the control hub there's plenty of research and coding to be done!
+check the team discord for an ongoing list of programming projects that still need completion. even
+without the control hub there's plenty of research and coding to be done!
 
 ## the software team!
 
 captain: Lake
 
--   email: patience.gifford23@trinityschoolnyc.org
+- email: patience.gifford23@trinityschoolnyc.org
