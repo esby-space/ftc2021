@@ -35,7 +35,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
  * To learn more about the FTC field coordinate model, see FTC_FieldCoordinateSystemDefinition.pdf in this folder
  */
 
-@TeleOp(name="Vuforia OP", group ="Disco bot")
+@TeleOp(name="Vuforia OP", group ="Vuforia")
 public class VuforiaOP extends LinearOpMode {
 
     private static final String VUFORIA_KEY =
@@ -57,7 +57,7 @@ public class VuforiaOP extends LinearOpMode {
 
     @Override public void runOpMode() {
         // GET WEBCAM //
-        webcamName = hardwareMap.get(WebcamName.class, "webcam");
+        webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
 
         // SETUP DRIVER STATION SCREEN WITH VUFORIA //
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());

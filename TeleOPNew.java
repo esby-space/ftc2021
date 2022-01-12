@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "TeleOP New", group = "Disco Bot")
+@TeleOp(name = "TeleOP New", group = "TeleOP")
 public class TeleOPNew extends LinearOpMode {
 
     @Override
@@ -28,6 +28,9 @@ public class TeleOPNew extends LinearOpMode {
         Servo deliverySystem = hardwareMap.servo.get("deliverySystem");
 
         // CONFIGURATION //
+        // set to true if using two controllers
+        boolean twoPlayers = true;
+
         // motor power config
         double calmDownMecanum = 1; // how much the chassis just needs to chill
         double intakeSystemRate = 1; // how fast the intake system should run
@@ -43,6 +46,7 @@ public class TeleOPNew extends LinearOpMode {
         // SETUP //
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+//        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE); // backwards gear, much love ryman <3
 
         // rising edge button detector setup
         boolean risingB = false;
@@ -69,8 +73,14 @@ public class TeleOPNew extends LinearOpMode {
             // MOVEMENT OF MECANUM WHEELS //
             // credit to game manual 0
             double move_y = -gamepad1.left_stick_y; // Remember, this is reversed!
-            double move_x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-            double move_rotate = gamepad1.right_stick_x;
+            double move_x = -gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double move_rotate = -gamepad1.right_stick_x;
+
+            if (twoPlayers) {
+                move_y = -gamepad2.left_stick_y;
+                move_x = -gamepad2.left_stick_x * 1.1;
+                move_rotate = -gamepad2.right_stick_x;
+            }
 
             double denominator = Math.max(Math.abs(move_y) + Math.abs(move_x) + Math.abs(move_rotate), 1) * calmDownMecanum;
             frontLeft.setPower((move_y + move_x + move_rotate) / denominator);
@@ -151,12 +161,12 @@ public class TeleOPNew extends LinearOpMode {
                 linearSlideRuntime.reset();
 
             } else if (gamepad1.dpad_up) {
-                // move down
-                linearSlide.setPower(-linearSlideBaseRate);
-
-            } else if (gamepad1.dpad_down) {
                 // move up
                 linearSlide.setPower(linearSlideBaseRate);
+
+            } else if (gamepad1.dpad_down) {
+                // move down
+                linearSlide.setPower(-linearSlideBaseRate);
             }
             // this is also quite ugly °^°
 

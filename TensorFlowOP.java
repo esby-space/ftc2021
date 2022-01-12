@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-@TeleOp(name = "TensorFlow Object Detection", group = "Disco Bot")
+@TeleOp(name = "TensorFlow Object Detection", group = "Vuforia")
 public class TensorFlowOP extends LinearOpMode {
     /**
      * TensorFlow model that recognized all objects, specialized ones available
@@ -77,7 +77,7 @@ public class TensorFlowOP extends LinearOpMode {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "webcam");
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
 
         Vuforia = ClassFactory.getInstance().createVuforia(parameters);
     }

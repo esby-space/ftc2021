@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 
-@Autonomous(name="TestOP AutonOP", group="Disco Bot")
+@Autonomous(name="AutonOP", group="Auton")
 public class AutonOP extends LinearOpMode {
 
     /* Declare OpMode members. */

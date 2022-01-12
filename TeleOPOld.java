@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "TeleOP old", group = "Disco Bot")
+@TeleOp(name = "TeleOP old", group = "TeleOP")
 public class TeleOPOld extends LinearOpMode {
 
     @Override
