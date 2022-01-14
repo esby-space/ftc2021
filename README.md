@@ -14,7 +14,7 @@
 5. unplug from the robot, connect the driver hub to control hub via wifi
 6. robot go beep boop, select configuration and OP mode, initialize, and press play!
 
-### files
+## files
 
 1. `AutonOP` - files for 30s autonomous period
     - `AutopOPSimple.java` - current working file, only goes forward
@@ -52,8 +52,8 @@
 | left trigger         | duck wheel ccw       |
 | right trigger        | duck wheel cw        |
 
--   cw - clockwise
--   ccw - counterclockwise
+-   **cw** - clockwise
+-   **ccw** - counterclockwise
 -   let us know of any suggestions to make this better!
 
 ### tweaking
@@ -62,14 +62,20 @@
 
 ## AutonOP
 
-TBD
+### plan
+
+1. use tensorflow object detection to see where we should place the duck
+2. do a ~180 degree spin to align delivery system with shipping container
+3. drive and drop off the duck
+4. drive forward and turn ~90 degrees so we're facing the duck carousel
+5. drive forward and align duck wheel with duck carosel, spin until duck falls off
+6. spin to align us with the wall, strafe into box
 
 ---
 
 ## i would love your help!
 
-check the team discord for an ongoing list of programming projects that still need completion. even
-without the control hub there's plenty of research and coding to be done!
+check the team discord for an ongoing list of programming projects that still need completion!
 
 ## the software team!
 
