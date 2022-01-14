@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.teleOP;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@TeleOp(name = "TeleOP", group = "TeleOP")
-public class TeleOP extends LinearOpMode {
+@TeleOp(name = "TeleOP New", group = "TeleOP")
+public class TeleOPNew extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -28,24 +28,28 @@ public class TeleOP extends LinearOpMode {
         Servo deliverySystem = hardwareMap.servo.get("deliverySystem");
 
         // CONFIGURATION //
+        // set to true if using two controllers
+        boolean twoPlayers = true;
+
         // motor power config
         double calmDownMecanum = 1; // how much the chassis just needs to chill
         double intakeSystemRate = 1; // how fast the intake system should run
         double duckWheelRate = 0.5; //how fast the duck wheel could spin
-        double linearSlideLevelRate = 1; // calibrate to reach level 1, 2, 3
+        double linearSlideLevelRate = 0.5; // calibrate to reach level 1, 2, 3
         double linearSlideBaseRate = 1; // how fast the linear slide goes up when holding down button
 
         // delivery system servo config
         double initialPosition = 0.7; // position when intake system running
-        double movingPosition = 0.5; // position when holding piece and going up
+        double movingPosition = 0.6; // position when holding piece and going up
         double droppingPosition = 0.3; // position when dropping piece
 
         // SETUP //
-//        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE); // backwards gear, much love ryman <3
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        // frontLeft.setDirection(DcMotorSimple.Direction.REVERSE); // backwards gear, much love ryman <3
 
         // rising edge button detector setup
-        boolean risingA = false;
+        boolean risingB = false;
         boolean risingX = false;
         boolean risingY = false;
         boolean risingLeftBumper = false;
@@ -61,28 +65,28 @@ public class TeleOP extends LinearOpMode {
         deliverySystem.setPosition(initialPosition);
 
         // timer for linear slide
-        ElapsedTime runtime = new ElapsedTime();
-        double startTime = 0;
+        ElapsedTime linearSlideRuntime = new ElapsedTime();
 
         // MAIN LOOP //
         while (opModeIsActive()) {
 
             // MOVEMENT OF MECANUM WHEELS //
             // credit to game manual 0
-            double move_x = gamepad2.left_stick_y; // Remember, this is reversed!
-            double move_y = -gamepad2.left_stick_x * 1.1; // Counteract imperfect strafing
-            double move_rotate = gamepad2.right_stick_x;
+            double move_y = -gamepad1.left_stick_y; // Remember, this is reversed!
+            double move_x = -gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double move_rotate = -gamepad1.right_stick_x;
+
+            if (twoPlayers) {
+                move_y = -gamepad2.left_stick_y;
+                move_x = -gamepad2.left_stick_x * 1.1;
+                move_rotate = -gamepad2.right_stick_x;
+            }
 
             double denominator = Math.max(Math.abs(move_y) + Math.abs(move_x) + Math.abs(move_rotate), 1) * calmDownMecanum;
-            double frontLeftPower = (move_y + move_x + move_rotate) / denominator;
-            double backLeftPower = (move_y - move_x + move_rotate) / denominator;
-            double frontRightPower = (move_y - move_x - move_rotate) / denominator;
-            double backRightPower = (move_y + move_x - move_rotate) / denominator;
-
-            frontLeft.setPower(frontLeftPower);
-            backLeft.setPower(backLeftPower);
-            frontRight.setPower(frontRightPower);
-            backRight.setPower(backRightPower);
+            frontLeft.setPower((move_y + move_x + move_rotate) / denominator);
+            backLeft.setPower((move_y - move_x + move_rotate) / denominator);
+            frontRight.setPower((move_y - move_x - move_rotate) / denominator);
+            backRight.setPower((move_y + move_x - move_rotate) / denominator);
 
             // DELIVERY SYSTEM //
             if (!risingLeftBumper && gamepad1.left_bumper) {
@@ -93,12 +97,15 @@ public class TeleOP extends LinearOpMode {
 
             switch (positionState) {
                 case 0:
+                    // ready to pick things up
                     deliverySystem.setPosition(initialPosition);
                     break;
                 case 1:
+                    // moving up with a piece
                     deliverySystem.setPosition(movingPosition);
                     break;
                 case 2:
+                    // dropping a piece
                     deliverySystem.setPosition(droppingPosition);
                     break;
             }
@@ -108,9 +115,11 @@ public class TeleOP extends LinearOpMode {
             risingRightBumper = gamepad1.right_bumper;
 
             // INTAKE SYSTEM //
-            if (gamepad1.dpad_up) {
+            if (gamepad1.dpad_left) {
+                // spits piece out
                 intakeSystem.setPower(-intakeSystemRate);
-            } else if (gamepad1.dpad_down) {
+            } else if (gamepad1.dpad_right) {
+                // eats piece in
                 intakeSystem.setPower(intakeSystemRate);
             } else {
                 intakeSystem.setPower(0);
@@ -123,58 +132,54 @@ public class TeleOP extends LinearOpMode {
 
             if (duckWheelCCW > 0) {
                 duckWheel.setPower(-duckWheelCCW);
-                telemetry.addData("Duck Wheel", "Counter-clockwise");
-                telemetry.update();
             } else if (duckWheelCW > 0) {
                 duckWheel.setPower(duckWheelCW);
-                telemetry.addData("Duck Wheel", "Clockwise");
-                telemetry.update();
             } else {
                 duckWheel.setPower(0);
             }
 
             // LINEAR SLIDE
-            double seconds = 0;
+            double timeout = 0;
 
             // determine the number of seconds from the bottom the linear slide has to run for
-            if (!risingY && gamepad1.y) {
+            // move the delivery system servo to moving position
+            if (!risingX && gamepad1.x) {
                 // move to level 1
-                seconds = 0.4 * linearSlideLevelRate;
-                startTime = runtime.time();
-                telemetry.addData("Linear Slide", "Going to level 1");
-
-            } else if (!risingX && gamepad1.x) {
+                positionState = 1;
+                deliverySystem.setPosition(movingPosition);
+                timeout = 0.4 * linearSlideLevelRate;
+                linearSlideRuntime.reset();
+            } else if (!risingY && gamepad1.y) {
                 // move to level 2
-                seconds = 1.2 * linearSlideLevelRate;
-                startTime = runtime.time();
-                telemetry.addData("Linear Slide", "Going to level 2");
+                positionState = 1;
+                deliverySystem.setPosition(movingPosition);
+                timeout = 1.2 * linearSlideLevelRate;
+                linearSlideRuntime.reset();
 
-            } else if (!risingA && gamepad1.a) {
+            } else if (!risingB && gamepad1.b) {
                 // move to level 3
-                seconds = 2.0 * linearSlideLevelRate;
-                startTime = runtime.time();
-                telemetry.addData("Linear Slide", "Going to level 3");
+                positionState = 1;
+                deliverySystem.setPosition(movingPosition);
+                timeout = 2.0 * linearSlideLevelRate;
+                linearSlideRuntime.reset();
 
-            } else if (gamepad1.b) {
-                // move down when b is pressed
-                linearSlide.setPower(-linearSlideBaseRate);
-                telemetry.addData("Linear Slide", "Going down");
-
-            } else if (gamepad1.dpad_left) {
-                // secret debug in case things go wrong
+            } else if (gamepad1.dpad_up) {
+                // move up
                 linearSlide.setPower(linearSlideBaseRate);
-                telemetry.addData("Linear Slide", "Going up");
+
+            } else if (gamepad1.dpad_down) {
+                // move down
+                linearSlide.setPower(-linearSlideBaseRate);
             }
-            telemetry.update();
             // this is also quite ugly °^°
 
             // run linear slide motor while current time < target time
-            while (runtime.time() < startTime + seconds) {
+            while (linearSlideRuntime.time() < timeout) {
                 linearSlide.setPower(1);
             }
             linearSlide.setPower(0);
 
-            risingA = gamepad1.a;
+            risingB = gamepad1.b;
             risingX = gamepad1.x;
             risingY = gamepad1.y;
 

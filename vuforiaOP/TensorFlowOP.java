@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.vuforiaOP;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-@TeleOp(name = "TensorFlow Object Detection", group = "Vuforia")
+@TeleOp(name = "TensorFlow Object Detection OP", group = "Vuforia")
 public class TensorFlowOP extends LinearOpMode {
     /**
      * TensorFlow model that recognized all objects, specialized ones available

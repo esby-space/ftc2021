@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.autonOP;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 
-@Autonomous(name = "AutonSimpleOP", group = "Auton")
-public class AutonSimple extends LinearOpMode {
+@Autonomous(name = "AutonOP Simple", group = "Auton")
+public class AutonOPSimple extends LinearOpMode {
 
     // MOTORS AND SERVOS//
     private DcMotor frontLeft;
