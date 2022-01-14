@@ -28,7 +28,7 @@ public class TeleOPNew extends LinearOpMode {
         Servo deliverySystem = hardwareMap.servo.get("deliverySystem");
 
         // CONFIGURATION //
-        // set to true if using two controllers
+        // set to true if using two controllers, gamepad 2 will control chassis, gamepad 1 everything else
         boolean twoPlayers = true;
 
         // motor power config
