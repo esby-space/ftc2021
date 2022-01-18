@@ -29,7 +29,7 @@ public class TeleOPNew extends LinearOpMode {
 
         // CONFIGURATION //
         // set to true if using two controllers, gamepad 2 will control chassis, gamepad 1 everything else
-        boolean twoPlayers = true;
+        boolean twoPlayers = false;
 
         // motor power config
         double calmDownMecanum = 1; // how much the chassis just needs to chill
@@ -73,7 +73,7 @@ public class TeleOPNew extends LinearOpMode {
             // MOVEMENT OF MECANUM WHEELS //
             // credit to game manual 0
             double move_y = -gamepad1.left_stick_y; // Remember, this is reversed!
-            double move_x = -gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+            double move_x = -gamepad1.left_stick_x * 1.0; // Counteract imperfect strafing
             double move_rotate = -gamepad1.right_stick_x;
 
             if (twoPlayers) {

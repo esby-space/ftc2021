@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.vuforiaOP;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -36,6 +37,7 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
  */
 
 @TeleOp(name="Vuforia OP", group ="Vuforia")
+@Disabled
 public class VuforiaOP extends LinearOpMode {
 
     private static final String VUFORIA_KEY =

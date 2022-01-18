@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonOP;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 
 @Autonomous(name="AutonOP", group="Auton")
+@Disabled
 public class AutonOP extends LinearOpMode {
 
     /* Declare OpMode members. */

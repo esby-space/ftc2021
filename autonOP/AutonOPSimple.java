@@ -37,8 +37,8 @@ public class AutonOPSimple extends LinearOpMode {
         waitForStart();
 
         // reset encoder
-        frontLeft.setMode(RunMode.STOP_AND_RESET_ENCODER);
-        frontRight.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        backLeft.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        backRight.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
         // math to get driving target
         double inchesToMove = 18;
@@ -48,14 +48,14 @@ public class AutonOPSimple extends LinearOpMode {
         int encoderDrivingTarget = (int)(rotationsNeeded * MOTOR_TICK_COUNT);
 
         // goals
-        frontLeft.setTargetPosition(encoderDrivingTarget);
-        frontRight.setTargetPosition(encoderDrivingTarget);
+        backLeft.setTargetPosition(encoderDrivingTarget);
+        backRight.setTargetPosition(encoderDrivingTarget);
 
         // start!
-        frontLeft.setPower(0.5);
-        frontRight.setPower(0.5);
-        frontLeft.setMode(RunMode.RUN_TO_POSITION);
-        frontRight.setMode(RunMode.RUN_TO_POSITION);
+        backLeft.setPower(0.5);
+        backRight.setPower(0.5);
+        backLeft.setMode(RunMode.RUN_TO_POSITION);
+        backRight.setMode(RunMode.RUN_TO_POSITION);
 
         // do nothing while moving
         while (frontLeft.isBusy() || frontRight.isBusy()) {
@@ -65,7 +65,7 @@ public class AutonOPSimple extends LinearOpMode {
         }
 
         // turn off when arrived
-        frontLeft.setPower(0);
-        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
     }
 }
