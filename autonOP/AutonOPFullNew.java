@@ -55,10 +55,10 @@ public class AutonOPFullNew extends LinearOpMode {
 
         // GET MOTORS //
         // control hub
-        frontLeft = hardwareMap.dcMotor.get("frontLeft");
-        frontRight = hardwareMap.dcMotor.get("frontRight");
-        backLeft = hardwareMap.dcMotor.get("backLeft");
-        backRight = hardwareMap.dcMotor.get("backRight");
+        frontLeft = hardwareMap.dcMotor.get("leftFront");
+        frontRight = hardwareMap.dcMotor.get("rightFront");
+        backLeft = hardwareMap.dcMotor.get("leftRear");
+        backRight = hardwareMap.dcMotor.get("rightRear");
 
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);

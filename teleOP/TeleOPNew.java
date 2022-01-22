@@ -14,10 +14,10 @@ public class TeleOPNew extends LinearOpMode {
     public void runOpMode() {
         // MOTORS AND SERVOS //
         // control hub
-        DcMotor frontLeft = hardwareMap.dcMotor.get("frontLeft");
-        DcMotor frontRight = hardwareMap.dcMotor.get("frontRight");
-        DcMotor backLeft = hardwareMap.dcMotor.get("backLeft");
-        DcMotor backRight = hardwareMap.dcMotor.get("backRight");
+        DcMotor frontLeft = hardwareMap.dcMotor.get("leftFront");
+        DcMotor frontRight = hardwareMap.dcMotor.get("rightFront");
+        DcMotor backLeft = hardwareMap.dcMotor.get("leftRear");
+        DcMotor backRight = hardwareMap.dcMotor.get("rightRear");
 
         // expansion hub
         DcMotor linearSlide = hardwareMap.dcMotor.get("linearSlide");
