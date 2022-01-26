@@ -29,14 +29,12 @@ public class TeleOPNew extends LinearOpMode {
 
         // CONFIGURATION //
         // set to true if using two controllers, gamepad 2 will control chassis, gamepad 1 everything else
-        boolean twoPlayers = false;
+        boolean twoPlayers = true;
 
         // motor power config
         double calmDownMecanum = 1; // how much the chassis just needs to chill
         double intakeSystemRate = 1; // how fast the intake system should run
-        double duckWheelRate = 0.5; //how fast the duck wheel could spin
-        double linearSlideLevelRate = 0.5; // calibrate to reach level 1, 2, 3
-        double linearSlideBaseRate = 1; // how fast the linear slide goes up when holding down button
+        double duckWheelRate = 0.7; //how fast the duck wheel could spin
 
         // delivery system servo config
         double initialPosition = 0.7; // position when intake system running
@@ -69,16 +67,15 @@ public class TeleOPNew extends LinearOpMode {
 
         // MAIN LOOP //
         while (opModeIsActive()) {
-
             // MOVEMENT OF MECANUM WHEELS //
             // credit to game manual 0
-            double move_y = -gamepad1.left_stick_y; // Remember, this is reversed!
-            double move_x = -gamepad1.left_stick_x * 1.0; // Counteract imperfect strafing
+            double move_y = gamepad1.left_stick_y; // Remember, this is reversed!
+            double move_x = gamepad1.left_stick_x * 1.0; // Counteract imperfect strafing
             double move_rotate = -gamepad1.right_stick_x;
 
             if (twoPlayers) {
-                move_y = -gamepad2.left_stick_y;
-                move_x = -gamepad2.left_stick_x * 1.1;
+                move_y = gamepad2.left_stick_y;
+                move_x = gamepad2.left_stick_x * 1.1;
                 move_rotate = -gamepad2.right_stick_x;
             }
 
@@ -139,49 +136,61 @@ public class TeleOPNew extends LinearOpMode {
             }
 
             // LINEAR SLIDE
-            double timeout = 0;
-
-            // determine the number of seconds from the bottom the linear slide has to run for
-            // move the delivery system servo to moving position
-            if (!risingX && gamepad1.x) {
-                // move to level 1
-                positionState = 1;
-                deliverySystem.setPosition(movingPosition);
-                timeout = 0.4 * linearSlideLevelRate;
-                linearSlideRuntime.reset();
-            } else if (!risingY && gamepad1.y) {
-                // move to level 2
-                positionState = 1;
-                deliverySystem.setPosition(movingPosition);
-                timeout = 1.2 * linearSlideLevelRate;
-                linearSlideRuntime.reset();
-
-            } else if (!risingB && gamepad1.b) {
-                // move to level 3
-                positionState = 1;
-                deliverySystem.setPosition(movingPosition);
-                timeout = 2.0 * linearSlideLevelRate;
-                linearSlideRuntime.reset();
-
-            } else if (gamepad1.dpad_up) {
-                // move up
-                linearSlide.setPower(linearSlideBaseRate);
-
-            } else if (gamepad1.dpad_down) {
-                // move down
-                linearSlide.setPower(-linearSlideBaseRate);
-            }
-            // this is also quite ugly °^°
-
-            // run linear slide motor while current time < target time
-            while (linearSlideRuntime.time() < timeout) {
+            if (gamepad1.dpad_up) {
                 linearSlide.setPower(1);
+            } else if (gamepad1.dpad_down) {
+                linearSlide.setPower(-1);
+            } else if (twoPlayers && gamepad1.left_stick_y != 0) {
+                linearSlide.setPower(-gamepad1.left_stick_y);
+            } else {
+                linearSlide.setPower(0);
             }
-            linearSlide.setPower(0);
 
-            risingB = gamepad1.b;
-            risingX = gamepad1.x;
-            risingY = gamepad1.y;
+//            double timeout = 0;
+//
+//            // determine the number of seconds from the bottom the linear slide has to run for
+//            // move the delivery system servo to moving position
+//            if (!risingX && gamepad1.x) {
+//                // move to level 1
+//                positionState = 1;
+//                deliverySystem.setPosition(movingPosition);
+//                timeout = 0.4 * linearSlideLevelRate;
+//                linearSlideRuntime.reset();
+//            } else if (!risingY && gamepad1.y) {
+//                // move to level 2
+//                positionState = 1;
+//                deliverySystem.setPosition(movingPosition);
+//                timeout = 1.2 * linearSlideLevelRate;
+//                linearSlideRuntime.reset();
+//
+//            } else if (!risingB && gamepad1.b) {
+//                // move to level 3
+//                positionState = 1;
+//                deliverySystem.setPosition(movingPosition);
+//                timeout = 2.0 * linearSlideLevelRate;
+//                linearSlideRuntime.reset();
+//
+//            } else if (gamepad1.dpad_up) {
+//                // move up
+//                linearSlide.setPower(1);
+//
+//            } else if (gamepad1.dpad_down) {
+//                // move down
+//                linearSlide.setPower(-1);
+//            } else {
+//                linearSlide.setPower(0);
+//            }
+//            // this is also quite ugly °^°
+//
+//            // run linear slide motor while current time < target time
+//            while (linearSlideRuntime.time() < timeout) {
+//                linearSlide.setPower(1);
+//            }
+//            linearSlide.setPower(0);
+//
+//            risingB = gamepad1.b;
+//            risingX = gamepad1.x;
+//            risingY = gamepad1.y;
 
             idle();
         }
