@@ -66,7 +66,7 @@ public class AutonOP extends LinearOpMode {
         backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
-        frontLeftMotor.setMode(RunMode.RUN_USING_ENCODER);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
