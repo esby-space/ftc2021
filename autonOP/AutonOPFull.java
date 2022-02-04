@@ -235,9 +235,7 @@ DriveForward(.25);
             DriveForward(power);
 
             while ((opModeIsActive() &&
-                    (runtime.seconds() < 4) &&
-                    frontLeftMotor.isBusy() &&
-                    frontRightMotor.isBusy())) {
+                    (runtime.seconds() < 4))) {
 
             }
 

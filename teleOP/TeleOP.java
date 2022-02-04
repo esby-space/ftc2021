@@ -33,7 +33,6 @@ public class TeleOP extends LinearOpMode {
         // motor power config
         double calmDownMecanum = 1; // how much the chassis just needs to chill
         double intakeSystemRate = 1; // how fast the intake system should run
-        double duckWheelRate = 0.5; //how fast the duck wheel could spin
         double linearSlideLevelRate = 1; // calibrate to reach level 1, 2, 3
         double linearSlideBaseRate = 1; // how fast the linear slide goes up when holding down button
 
@@ -120,8 +119,8 @@ public class TeleOP extends LinearOpMode {
 
             // DUCK WHEEL //
             // limit the speed of the duck wheel if necessary
-            double duckWheelCCW = Math.min(gamepad1.left_trigger, duckWheelRate);
-            double duckWheelCW = Math.min(gamepad1.right_trigger, duckWheelRate);
+            double duckWheelCCW = gamepad1.left_trigger;
+            double duckWheelCW = gamepad1.right_trigger;
 
             if (duckWheelCCW > 0) {
                 duckWheel.setPower(-duckWheelCCW);

@@ -5,13 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 
 @Autonomous(name="AutonOP", group="Auton")
-@Disabled
+
 public class AutonOP extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -34,7 +33,7 @@ public class AutonOP extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.6;
+    static final double     DRIVE_SPEED             = 0.2;
     static final double     TURN_SPEED              = 0.5;
 
     @Override
@@ -44,11 +43,13 @@ public class AutonOP extends LinearOpMode {
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
-        frontLeftMotor = hardwareMap.dcMotor.get("frontLeft");
-        frontRightMotor = hardwareMap.dcMotor.get("frontRight");
-        backLeftMotor = hardwareMap.dcMotor.get("backLeft");
-        backRightMotor = hardwareMap.dcMotor.get("backRight");
+        frontLeftMotor = hardwareMap.dcMotor.get("leftFront");
+        frontRightMotor = hardwareMap.dcMotor.get("rightFront");
+        backLeftMotor = hardwareMap.dcMotor.get("leftRear");
+        backRightMotor = hardwareMap.dcMotor.get("rightRear");
         linearSlide = hardwareMap.dcMotor.get("linearSlide");
+        duckTurner = hardwareMap.dcMotor.get("duckSystem");
+
         frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -83,9 +84,13 @@ public class AutonOP extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  48,  48, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+        move1(DRIVE_SPEED, 0.5);
+        move2(DRIVE_SPEED,  2.2);
+        move4(DRIVE_SPEED, 1.5);
+        duckSpin(-0.3, 10);
+        move2(DRIVE_SPEED, 2.4);
+//        move3(DRIVE_SPEED, 1);
+
 
        // robot.leftClaw.setPosition(1.0);            // S4: Stop and close the claw.
        // robot.rightClaw.setPosition(0.0);
@@ -104,31 +109,12 @@ public class AutonOP extends LinearOpMode {
      *  3) Driver stops the opmode running.
      */
 
-    public void encoderDrive(double speed,
-                             double leftInches, double rightInches,
-                             double timeoutS) {
-        int newLeftTarget;
-        int newRightTarget;
+    public void move1(double speed,
+                      double timeoutS) {
 
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
-
-            // Determine new target position, and pass to motor controller
-            newLeftTarget = frontLeftMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
-            newRightTarget = frontRightMotor.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
-            frontLeftMotor.setTargetPosition(newLeftTarget);
-            frontRightMotor.setTargetPosition(newRightTarget);
-          //  backLeftMotor.setTargetPosition(newLeftTarget);
-            //backRightMotor.setTargetPosition(newRightTarget);
-
-
-            // Turn On RUN_TO_POSITION
-            frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
 
             // reset the timeout time and start motion.
             runtime.reset();
@@ -138,25 +124,10 @@ public class AutonOP extends LinearOpMode {
             backRightMotor.setPower(Math.abs(speed));
 
 
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
-            // its target position, the motion will stop.  This is "safer" in the event that the robot will
-            // always end the motion as soon as possible.
-            // However, if you require that BOTH motors have finished their moves before the robot continues
-            // onto the next step, use (isBusy() || isBusy()) in the loop test.
             while (opModeIsActive() &&
-                    (runtime.seconds() < timeoutS) &&
-                    (frontLeftMotor.isBusy() && frontRightMotor.isBusy())) {
+                    (runtime.seconds() < timeoutS) ) {
 
                 // Display it for the driver.
-                telemetry.addData("Path1",  "Running to %7d :%7d", newLeftTarget,  newRightTarget);
-                telemetry.addData("Path2",  "Running at %7d :%7d",
-                        frontLeftMotor.getCurrentPosition(),
-                        frontRightMotor.getCurrentPosition(),
-                        backRightMotor.getCurrentPosition(),
-                        backLeftMotor.getCurrentPosition());
-
-                telemetry.update();
             }
 
             // Stop all motion;
@@ -165,15 +136,149 @@ public class AutonOP extends LinearOpMode {
             backRightMotor.setPower(0);
             backLeftMotor.setPower(0);
 
+            sleep(250);   // optional pause after each move
+        }
+    }
 
-            // Turn off RUN_TO_POSITION
-            frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    public void move2(double speed,
+                      double timeoutS) {
 
 
-              sleep(250);   // optional pause after each move
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            frontLeftMotor.setPower(-0.2);
+            frontRightMotor.setPower(0.15);
+            backLeftMotor.setPower(0.1);
+            backRightMotor.setPower(-0.2);
+
+
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) ) {
+
+                // Display it for the driver.
+            }
+
+            // Stop all motion;
+            frontLeftMotor.setPower(0);
+            frontRightMotor.setPower(0);
+            backRightMotor.setPower(0);
+            backLeftMotor.setPower(0);
+
+            sleep(250);   // optional pause after each move
+        }
+    }
+
+    public void move3(double speed,
+                      double timeoutS) {
+
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            frontLeftMotor.setPower(0.2);
+            frontRightMotor.setPower(-0.2);
+            backLeftMotor.setPower(-0.2);
+            backRightMotor.setPower(0.2);
+
+
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) ) {
+
+                // Display it for the driver.
+            }
+
+            // Stop all motion;
+            frontLeftMotor.setPower(0);
+            frontRightMotor.setPower(0);
+            backRightMotor.setPower(0);
+            backLeftMotor.setPower(0);
+
+            sleep(250);   // optional pause after each move
+        }
+    }
+
+    /** move backwards */
+    public void move4(double speed,
+                      double timeoutS) {
+
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            frontLeftMotor.setPower(-0.2);
+            frontRightMotor.setPower(-0.2);
+            backLeftMotor.setPower(-0.2);
+            backRightMotor.setPower(-0.2);
+
+
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) ) {
+
+                // Display it for the driver.
+            }
+
+            // Stop all motion;
+            frontLeftMotor.setPower(0);
+            frontRightMotor.setPower(0);
+            backRightMotor.setPower(0);
+            backLeftMotor.setPower(0);
+
+            sleep(250);   // optional pause after each move
+        }
+    }
+
+    public void duckSpin(double speed, double timeout) {
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            duckTurner.setPower(speed);
+
+
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeout) ) {
+
+                // Display it for the driver.
+            }
+        }
+    }
+
+    public void move5(double speed,
+                      double timeoutS) {
+
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            frontLeftMotor.setPower(0.2);
+            frontRightMotor.setPower(-0.15);
+            backLeftMotor.setPower(-0.1);
+            backRightMotor.setPower(0.2);
+
+
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS)) {
+
+                // Display it for the driver.
+            }
+
+            // Stop all motion;
+            frontLeftMotor.setPower(0);
+            frontRightMotor.setPower(0);
+            backRightMotor.setPower(0);
+            backLeftMotor.setPower(0);
+
+            sleep(250);   // optional pause after each move
         }
     }
 }

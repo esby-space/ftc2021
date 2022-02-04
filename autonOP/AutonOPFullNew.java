@@ -60,8 +60,8 @@ public class AutonOPFullNew extends LinearOpMode {
         backLeft = hardwareMap.dcMotor.get("leftRear");
         backRight = hardwareMap.dcMotor.get("rightRear");
 
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeft.setMode(RunMode.STOP_AND_RESET_ENCODER);
         frontRight.setMode(RunMode.STOP_AND_RESET_ENCODER);
         backLeft.setMode(RunMode.STOP_AND_RESET_ENCODER);

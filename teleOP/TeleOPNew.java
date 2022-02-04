@@ -34,7 +34,6 @@ public class TeleOPNew extends LinearOpMode {
         // motor power config
         double calmDownMecanum = 1; // how much the chassis just needs to chill
         double intakeSystemRate = 1; // how fast the intake system should run
-        double duckWheelRate = 0.7; //how fast the duck wheel could spin
 
         // delivery system servo config
         double initialPosition = 0.7; // position when intake system running
@@ -106,7 +105,7 @@ public class TeleOPNew extends LinearOpMode {
                     deliverySystem.setPosition(droppingPosition);
                     break;
             }
-            // this is so ugly °~°
+            // this is so ugly °~° NOOOOOOOO
 
             risingLeftBumper = gamepad1.left_bumper;
             risingRightBumper = gamepad1.right_bumper;
@@ -124,13 +123,31 @@ public class TeleOPNew extends LinearOpMode {
 
             // DUCK WHEEL //
             // limit the speed of the duck wheel if necessary
-            double duckWheelCCW = Math.min(gamepad1.left_trigger, duckWheelRate);
-            double duckWheelCW = Math.min(gamepad1.right_trigger, duckWheelRate);
+            double duckWheelCCW = gamepad1.left_trigger;
+            double duckWheelCW = gamepad1.right_trigger;
+            telemetry.addData("help", "we are so cool + swag");
+            telemetry.update();
 
             if (duckWheelCCW > 0) {
+                telemetry.addData("help", "we are so cool + swag");
+                telemetry.update();
                 duckWheel.setPower(-duckWheelCCW);
             } else if (duckWheelCW > 0) {
+                telemetry.addData("help", "we are so cool + swag, part two <3");
+                telemetry.update();
                 duckWheel.setPower(duckWheelCW);
+            } else {
+                duckWheel.setPower(0);
+            }
+
+            if (gamepad1.a) {
+                duckWheel.setPower(0.5);
+                telemetry.addData("help", "we are so cool + swag asfhl");
+                telemetry.update();
+            } else if (gamepad1.b) {
+                duckWheel.setPower(-0.5);
+                telemetry.addData("help", "we are so cool + swag, part two <3 asdfaliuh");
+                telemetry.update();
             } else {
                 duckWheel.setPower(0);
             }
@@ -138,6 +155,8 @@ public class TeleOPNew extends LinearOpMode {
             // LINEAR SLIDE
             if (gamepad1.dpad_up) {
                 linearSlide.setPower(1);
+                telemetry.addData("linear sllide", "go up up up up");
+                telemetry.update();
             } else if (gamepad1.dpad_down) {
                 linearSlide.setPower(-1);
             } else if (twoPlayers && gamepad1.left_stick_y != 0) {
