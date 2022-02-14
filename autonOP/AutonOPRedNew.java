@@ -1,17 +1,16 @@
 package org.firstinspires.ftc.teamcode.autonOP;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Autonomous(name="AutonOP", group="Auton")
+@Autonomous(name="AutonOPRed New", group="Auton")
 
-public class AutonOP extends LinearOpMode {
+public class AutonOPRedNew extends LinearOpMode {
 
     /* Declare OpMode members. */
     private DcMotor frontLeftMotor = null;
@@ -60,16 +59,16 @@ public class AutonOP extends LinearOpMode {
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
 
-        frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeftMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        frontRightMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        backLeftMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
+        backRightMotor.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
 
-        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeftMotor.setMode(RunMode.RUN_USING_ENCODER);
+        frontRightMotor.setMode(RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(RunMode.RUN_USING_ENCODER);
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0",  "Starting at %7d :%7d",
@@ -84,11 +83,14 @@ public class AutonOP extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        move1(DRIVE_SPEED, 0.5);
-        move2(DRIVE_SPEED,  2.2);
-        move4(DRIVE_SPEED, 1.5);
-        duckSpin(-0.3, 10);
-        move2(DRIVE_SPEED, 2.4);
+        move1(-DRIVE_SPEED, 0.5);
+//        move2(DRIVE_SPEED,  1.9);
+//        move4(DRIVE_SPEED, 1.5);
+        duckSpin(0.3, 5);
+        move2(DRIVE_SPEED, 1.25);
+        move1(-DRIVE_SPEED, 0.85);
+
+        //        move2(DRIVE_SPEED, 2.4);
 //        move3(DRIVE_SPEED, 1);
 
 
@@ -118,10 +120,10 @@ public class AutonOP extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            frontLeftMotor.setPower(Math.abs(speed));
-            frontRightMotor.setPower(Math.abs(speed));
-            backLeftMotor.setPower(Math.abs(speed));
-            backRightMotor.setPower(Math.abs(speed));
+            frontLeftMotor.setPower(speed);
+            frontRightMotor.setPower(speed);
+            backLeftMotor.setPower(speed);
+            backRightMotor.setPower(speed);
 
 
             while (opModeIsActive() &&
@@ -149,10 +151,10 @@ public class AutonOP extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            frontLeftMotor.setPower(-0.2);
-            frontRightMotor.setPower(0.15);
-            backLeftMotor.setPower(0.2);
-            backRightMotor.setPower(-0.2);
+            frontLeftMotor.setPower(0.12);
+            frontRightMotor.setPower(-0.15);
+            backLeftMotor.setPower(-0.15);
+            backRightMotor.setPower(0.15);
 
 
             while (opModeIsActive() &&
