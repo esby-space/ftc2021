@@ -73,7 +73,7 @@ public class AutonOPFullNew extends LinearOpMode {
         waitForStart();
 
         drive(0.5, 10);
-        strafe(0.5, 10);
+//        strafe(0.5, 10);
 
         while (opModeIsActive()) {
             if (TFOD != null) { // if out TFOD exists, see if we recognize anything new
@@ -98,7 +98,7 @@ public class AutonOPFullNew extends LinearOpMode {
     }
 
     public void drive(double power, double distance) {
-        encoderDrive(power, power, power, power, distance);
+        encoderDriveWhile(power, power, power, power, distance);
     }
 
     public void strafe(double power, double distance) {
@@ -134,7 +134,7 @@ public class AutonOPFullNew extends LinearOpMode {
             backRight.setMode(RunMode.RUN_TO_POSITION);
 
             // while the robot is active, time out not activated, and both motors are running
-            while (opModeIsActive() && frontLeft.isBusy() && frontLeft.isBusy()) {
+            while (opModeIsActive() && (frontLeft.isBusy() && frontLeft.isBusy())) {
                 telemetry.addData("Path", "Running at %7d :%7d",
                         frontLeft.getCurrentPosition(),
                         frontRight.getCurrentPosition());
@@ -146,6 +146,71 @@ public class AutonOPFullNew extends LinearOpMode {
             frontRight.setPower(0);
             backLeft.setPower(0);
             backRight.setPower(0);
+
+            // turn off run_to_position
+            frontLeft.setMode(RunMode.RUN_USING_ENCODER);
+            backRight.setMode(RunMode.RUN_USING_ENCODER);
+            frontRight.setMode(RunMode.RUN_USING_ENCODER);
+            backLeft.setMode(RunMode.RUN_USING_ENCODER);
+
+            // optional rest between moves
+            sleep(250);
+        }
+    }
+    public void encoderDriveWhile(double frontLeftPower, double frontRightPower, double backLeftPower, double backRightPower, double distance) {
+        double rotationsNeeded = distance / WHEEL_CIRCUMFERENCE;
+        int encoderDrivingTarget = (int) (rotationsNeeded * MOTOR_TICK_COUNT);
+        int leftTarget = encoderDrivingTarget + frontLeft.getCurrentPosition();
+        int rightTarget = encoderDrivingTarget + frontRight.getCurrentPosition();
+
+        // goals
+        frontLeft.setTargetPosition(leftTarget);
+        frontRight.setTargetPosition(rightTarget);
+        backLeft.setTargetPosition(leftTarget);
+        backRight.setTargetPosition(rightTarget);
+
+        // start!
+        frontLeft.setPower(frontLeftPower);
+        frontRight.setPower(frontRightPower);
+        backLeft.setPower(backLeftPower);
+        backRight.setPower(backRightPower);
+        while (opModeIsActive()) {
+//            double rotationsNeeded = distance / WHEEL_CIRCUMFERENCE;
+//            int encoderDrivingTarget = (int) (rotationsNeeded * MOTOR_TICK_COUNT);
+//            int leftTarget = encoderDrivingTarget + frontLeft.getCurrentPosition();
+//            int rightTarget = encoderDrivingTarget + frontRight.getCurrentPosition();
+//
+//            // goals
+//            frontLeft.setTargetPosition(leftTarget);
+//            frontRight.setTargetPosition(rightTarget);
+//            backLeft.setTargetPosition(leftTarget);
+//            backRight.setTargetPosition(rightTarget);
+//
+//            // start!
+//            frontLeft.setPower(frontLeftPower);
+//            frontRight.setPower(frontRightPower);
+//            backLeft.setPower(backLeftPower);
+//            backRight.setPower(backRightPower);
+
+            frontLeft.setMode(RunMode.RUN_TO_POSITION);
+            frontRight.setMode(RunMode.RUN_TO_POSITION);
+            backLeft.setMode(RunMode.RUN_TO_POSITION);
+            backRight.setMode(RunMode.RUN_TO_POSITION);
+
+            // stop the motors
+            if(((leftTarget -1) < frontLeft.getCurrentPosition()) && (frontLeft.getCurrentPosition()) < (leftTarget +1)) {
+                frontLeft.setPower(0);
+                backLeft.setPower(0);
+                frontRight.setPower(0);
+                backRight.setPower(0);
+                break;
+            }
+
+//            if(((rightTarget -1)< frontRight.getCurrentPosition()) && (frontRight.getCurrentPosition() < (rightTarget +1))) {
+//                frontRight.setPower(0);
+//                backRight.setPower(0);
+//                break;
+//            }
 
             // turn off run_to_position
             frontLeft.setMode(RunMode.RUN_USING_ENCODER);
